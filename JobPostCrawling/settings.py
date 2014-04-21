@@ -14,5 +14,5 @@ NEWSPIDER_MODULE = 'JobPostCrawling.spiders'
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = 'JobPostCrawling (+http://www.yourdomain.com)'
 
-DOWNLOAD_DELAY = 1
+DOWNLOAD_DELAY = 0.5
 #ROBOTSTXT_OBEY = True

@@ -12,6 +12,7 @@ from scrapy.selector import Selector
 
 from JobPostCrawling.items import JobpostcrawlingItem
 
+
 class JobPostCrawler(SitemapSpider):
     name = 'job_post_crawler'
     allowed_domains = ['targetjobs.co.uk']
@@ -30,8 +31,9 @@ class JobPostCrawler(SitemapSpider):
 
         if match(r'.*organisation-profile', response.url):
             # procedures for company pages
-            item['company_description'] = '\n'.join(
-                ''.join(p.xpath('.//text()').extract()) for p in sel.css('.hreview-aggregate > p'))
+            target = sel.css('.hreview-aggregate > p')
+            target.extend(sel.css('.hreview-aggregate > ul > li'))
+            item['company_description'] = '\n'.join(''.join(p.xpath('.//text()').extract()) for p in target)
             item['url'] = response.url
             yield item
         else:
@@ -40,8 +42,9 @@ class JobPostCrawler(SitemapSpider):
                 save_content = sel.xpath('//div[@id="save-content"]/a/text()').extract()[0]
                 organisation_link = sel.xpath('//p[@class="organisation-link"]/a/text()').extract()[0]
                 item['job_name'] = sel.xpath('//div[@class="main-content-core"]/h2/text()').extract()[0]
-                item['job_description'] = '\n'.join(
-                    ''.join(p.xpath('.//text()').extract()) for p in sel.css('.hreview-aggregate > p'))
+                target = sel.css('.hreview-aggregate > p')
+                target.extend(sel.css('.hreview-aggregate > ul > li'))
+                item['job_description'] = '\n'.join(''.join(p.xpath('.//text()').extract()) for p in target)
                 item['url'] = response.url
                 yield item
             except:
@@ -55,6 +58,7 @@ if __name__ == '__main__':
         file_name = args[4]
         os.system('rm ' + file_name)
         from scrapy.cmdline import execute
+
         execute()
         pass
     else:
